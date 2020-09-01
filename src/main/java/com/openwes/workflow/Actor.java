@@ -17,9 +17,14 @@ public class Actor {
         return (int) (left.getId() - right.getId());
     });
     private final Object mutex = new Object();
+    private final ActorProps props = new ActorProps();
     private String id;
     private String currentState;
     private TransitionLookup lookup;
+
+    public ActorProps getProps() {
+        return props;
+    }
 
     TransitionLookup getLookup() {
         return lookup;
@@ -60,9 +65,14 @@ public class Actor {
                 return;
             }
             inProcess.set(true);
+            Command cmd = new Command()
+                    .setActorId(getId())
+                    .setProps(props)
+                    .setData(action.getData())
+                    .setProcessor(transition.getProcessor());
             WorkFlowManager.instance()
                     .getExecutor()
-                    .submit();
+                    .submit(cmd);
         }
     }
 

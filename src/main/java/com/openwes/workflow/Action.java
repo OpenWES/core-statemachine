@@ -5,23 +5,22 @@ import com.openwes.workflow.utils.UniqId;
 /**
  *
  * @author xuanloc0511@gmail.com
- * @param <T>
  * @since Sep 1, 2020
  * @version 1.0.0
  *
  */
-public class Action<T extends Object> {
+public class Action {
 
     private long id = UniqId.snowflakeId();
     private final String actorId;
     private final String name;
-    private final T data;
+    private final Object data;
 
-    public Action(String actorId, String event) {
-        this(actorId, event, null);
+    public Action(String actorId, String name) {
+        this(actorId, name, null);
     }
 
-    public Action(String actorId, String name, T data) {
+    public Action(String actorId, String name, Object data) {
         this.actorId = actorId;
         this.name = name;
         this.data = data;
@@ -44,7 +43,7 @@ public class Action<T extends Object> {
         return name;
     }
 
-    public T getData() {
+    public Object getData() {
         return data;
     }
 

@@ -9,7 +9,7 @@ package com.openwes.workflow;
  */
 class WorkFlowExecutor {
 
-    public void submit(){
+    public void submit(Command cmd){
         
     }
     

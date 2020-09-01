@@ -8,24 +8,42 @@ package com.openwes.workflow;
  *
  */
 public class Transition {
-    
-    public final static Transition create(){
-        return new Transition();
-    }
-    
-    private Transition(){
+
+    public final static Transition from(String from) {
+        return new Transition()
+                .setFrom(from)
+                .setFromAny(false);
     }
 
+    public final static Transition fromAny() {
+        return new Transition()
+                .setFrom(null)
+                .setFromAny(true);
+    }
+
+    private Transition() {
+    }
+
+    private boolean fromAny = false;
     private String from = null;
     private String to = null;
     private String action = null;
     private String processor = null;
 
+    public boolean isFromAny() {
+        return fromAny;
+    }
+
+    Transition setFromAny(boolean fromAny) {
+        this.fromAny = fromAny;
+        return this;
+    }
+
     public String getFrom() {
         return from;
     }
 
-    public Transition setFrom(String from) {
+    Transition setFrom(String from) {
         this.from = from;
         return this;
     }

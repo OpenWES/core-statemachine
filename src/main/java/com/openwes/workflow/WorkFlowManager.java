@@ -1,5 +1,6 @@
 package com.openwes.workflow;
 
+import com.openwes.workflow.utils.Validate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,28 +30,41 @@ public class WorkFlowManager {
         return executor;
     }
 
-    public <T extends Actor> WorkFlow workFlow(Class<T> clzz) {
-        if (clzz == null) {
+    public WorkFlow workFlow(String actorType) {
+        if (Validate.isEmpty(actorType)) {
             throw new RuntimeException("");
         }
-        return workflows.get(clzz.getName());
+        return workflows.get(actorType);
     }
 
     public WorkFlowManager register(WorkFlow wf) {
         if (wf == null) {
             throw new RuntimeException("");
         }
+        WorkFlow old = workFlow(wf.getType());
+        if (old != null) {
+            old.getTransitions().forEach((transition) -> {
+                wf.addTransition(transition);
+            });
+        }
         workflows.put(wf.getType(), wf);
         return this;
     }
 
-    public <T extends Actor> WorkFlowManager unregister(Class<T> clzz) {
-        WorkFlow wf = workFlow(clzz);
+    public WorkFlowManager unregister(String actorType) {
+        WorkFlow wf = workFlow(actorType);
         if (wf == null) {
             return this;
         }
         wf.shutdown();
         workflows.remove(wf.getType());
         return this;
+    }
+
+    public void shutdown() {
+        workflows.forEach((actorType, workFlow) -> {
+            workFlow.shutdown();
+        });
+        workflows.clear();
     }
 }

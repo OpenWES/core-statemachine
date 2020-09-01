@@ -2,37 +2,38 @@ package com.openwes.workflow;
 
 import com.openwes.workflow.utils.ClassLoadException;
 import com.openwes.workflow.utils.ClassUtils;
-import java.util.Collection;
+import com.openwes.workflow.utils.Validate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  *
  * @author xuanloc0511@gmail.com
- * @param <T>
  * @since Sep 1, 2020
  * @version 1.0.0
  *
  */
-public class WorkFlow<T extends Actor> {
+public class WorkFlow {
 
-    public final static <T extends Actor> WorkFlow create(Class<T> clzz) {
-        return new WorkFlow(clzz);
+    public final static WorkFlow create(String actorType) {
+        return new WorkFlow(actorType);
     }
 
-    private final Class<T> type;
     private final Map<String, Actor> actors = new HashMap<>();
+    private final String type;
     private String actorLoader;
 
-    private WorkFlow(Class<T> type) {
-        if (type == null) {
+    private WorkFlow(String type) {
+        if (Validate.isEmpty(type)) {
             throw new RuntimeException("");
         }
         this.type = type;
     }
 
     public final String getType() {
-        return type.getName();
+        return type;
     }
 
     public String getActorLoader() {
@@ -46,6 +47,10 @@ public class WorkFlow<T extends Actor> {
 
     public WorkFlow addTransition(Transition transition) {
         return this;
+    }
+    
+    public List<Transition> getTransitions(){
+        return new ArrayList<>();
     }
 
     public void shutdown() {
