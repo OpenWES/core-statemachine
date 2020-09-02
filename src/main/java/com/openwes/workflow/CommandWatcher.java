@@ -7,7 +7,7 @@ package com.openwes.workflow;
 
 /**
  *
- * @author locngo {@literal (locngo@gmail.com)}
+ * @author xuanloc0511@gmail.com
  */
 public interface CommandWatcher {
 
