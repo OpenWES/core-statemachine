@@ -11,7 +11,7 @@ class WorkFlowExecutor {
 
     private final Worker w = new Worker();
 
-    void start(int numberOfWorker) {
+    void start() {
         w.start();
     }
 
