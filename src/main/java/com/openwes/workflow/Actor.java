@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class Actor {
-    
+
     private final static Logger LOGGER = LoggerFactory.getLogger(Actor.class);
     private final AtomicBoolean inProcess = new AtomicBoolean(false);
     private final PriorityQueue<Action> actions = new PriorityQueue<>((left, right) -> {
@@ -25,47 +25,47 @@ public class Actor {
     private String actorType;
     private String currentState;
     private TransitionLookup lookup;
-    
+
     void setActorType(String actorType) {
         this.actorType = actorType;
     }
-    
+
     public ActorProps getProps() {
         return props;
     }
-    
+
     TransitionLookup getLookup() {
         return lookup;
     }
-    
+
     Actor setLookup(TransitionLookup lookup) {
         this.lookup = lookup;
         return this;
     }
-    
+
     public final <T extends Actor> T setCurrentState(String currentState) {
         this.currentState = currentState;
         return (T) this;
     }
-    
+
     public final <T extends Actor> T setId(String id) {
         this.id = id;
         return (T) this;
     }
-    
+
     public final String getId() {
         return id;
     }
-    
+
     public final String getCurrentState() {
         return currentState;
     }
-    
+
     void enqueueAction(Action action) {
         actions.add(action);
         nextAction();
     }
-    
+
     void nextAction() {
         try {
             synchronized (mutex) {
@@ -80,7 +80,8 @@ public class Actor {
                 }
                 Transition transition = lookup.lookup(currentState, action.getName());
                 if (transition == null) {
-                    LOGGER.error("Invalid action {}. Actor {} is in state {}", action.getName(), id, currentState);
+                    LOGGER.error("Invalid action {}. Actor {}:{} is in state {}",
+                            action.getName(), actorType, id, currentState);
                     inProcess.set(false);
                     nextAction();
                     return;
@@ -96,22 +97,25 @@ public class Actor {
                         .setWatcher(new CommandWatcher() {
                             @Override
                             public void onComplete() {
-                                LOGGER.info("Actor {} change state from {} to {}", id, currentState, transition.getTo());
+                                LOGGER.info("Actor {}:{} change state from {} to {}",
+                                        actorType, id, currentState, transition.getTo());
                                 setCurrentState(transition.getTo());
                                 inProcess.set(false);
                                 nextAction();
                             }
-                            
+
                             @Override
                             public void onFail() {
-                                LOGGER.info("Process action {} fail. Actor {} keep state {}", action.getName(), id, currentState);
+                                LOGGER.info("Process action {} fail. Actor {}:{} keep state {}",
+                                        action.getName(), actorType, id, currentState);
                                 inProcess.set(false);
                                 nextAction();
                             }
-                            
+
                             @Override
                             public void onError(Throwable t) {
-                                LOGGER.error("Actor {} get error with action {}", id, action.getName(), t);
+                                LOGGER.error("Actor {}:{} get error with action {}",
+                                        actorType, id, action.getName(), t);
                             }
                         });
                 WorkFlowManager.instance()
@@ -119,18 +123,18 @@ public class Actor {
                         .submit(cmd);
             }
         } catch (InterruptedException e) {
-            LOGGER.error("handle next action get exception ", e);
+            LOGGER.error("actor {}:{} handle next action get exception ", actorType, id, e);
         }
     }
-    
+
     Action dequeueAction() {
         return actions.poll();
     }
-    
+
     void clearAction() {
         actions.clear();
     }
-    
+
     public int remainingAction() {
         return actions.size();
     }
