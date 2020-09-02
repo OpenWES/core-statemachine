@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author xuanloc0511@gmail.com
  */
-public class ProcessActionA2B extends Processor<Object> {
+public class ProcessActionAny2D extends Processor<Object>{
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(ProcessActionA2B.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(ProcessActionAny2D.class);
 
     @Override
     public boolean onProcess(ActorProps props, Object data) {

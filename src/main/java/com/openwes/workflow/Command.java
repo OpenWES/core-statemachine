@@ -1,15 +1,30 @@
 package com.openwes.workflow;
 
+import com.openwes.workflow.utils.ClockService;
+
 /**
  *
  * @author xuanloc0511@gmail.com
  */
-public class Command {
+class Command {
 
+    private final long started = ClockService.nowNS();
+    private long actionId;
+    private String actorType;
     private String processor;
     private Object data;
     private String actorId;
     private ActorProps props;
+    private CommandWatcher watcher;
+
+    public Command setActionId(long actionId) {
+        this.actionId = actionId;
+        return this;
+    }
+
+    public long getActionId() {
+        return actionId;
+    }
 
     public ActorProps getProps() {
         return props;
@@ -47,11 +62,35 @@ public class Command {
         return this;
     }
 
-    void complete() {
+    public Command setActorType(String actorType) {
+        this.actorType = actorType;
+        return this;
+    }
 
+    public String getActorType() {
+        return actorType;
+    }
+
+    public Command setWatcher(CommandWatcher watcher) {
+        this.watcher = watcher;
+        return this;
+    }
+
+    public long getStarted() {
+        return started;
+    }
+
+    void complete() {
+        watcher.onComplete();
+    }
+
+    void fail() {
+        watcher.onFail();
     }
 
     void error(Throwable t) {
-
+        fail();
+        watcher.onError(t);
     }
+
 }

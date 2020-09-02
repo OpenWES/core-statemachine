@@ -13,6 +13,10 @@ public class ClockWatch {
     ClockWatch() {
         started.set(ClockService.nowNS());
     }
+    
+    ClockWatch(long nanoTimes) {
+        started.set(nanoTimes);
+    }
 
     public long timeElapsedNS() {
         try {

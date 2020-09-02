@@ -15,32 +15,53 @@ public class Worker extends Thread {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Worker.class);
 
-    private final LinkedBlockingQueue<Command> context = new LinkedBlockingQueue<>();
+    private final LinkedBlockingQueue<Command> commands = new LinkedBlockingQueue<>();
+
+    void sendCommand(Command cmd) throws InterruptedException {
+        commands.put(cmd);
+    }
 
     @Override
     public void run() {
         while (!isInterrupted()) {
             Command cmd = null;
             try {
-                cmd = context.take();
+                cmd = commands.take();
                 if (cmd == null) {
                     break;
                 }
-                ClockWatch cw = ClockService.newClockWatch();
+                if (cmd instanceof Killed) {
+                    break;
+                }
+                ClockWatch cw = ClockService.newClockWatch(cmd.getStarted());
+                LOGGER.info("preparing time: {}", cw.timeElapsedMS());
                 Processor processor = ClassUtils.object(cmd.getProcessor());
-                processor.onProcess(cmd.getActorId(), cmd.getProps(), cmd.getData());
-                cw.timeElapsedMS();
-                cmd.complete();
+
+                //update process attribute
+                processor.setActorId(cmd.getActorId());
+                processor.setActorType(cmd.getActorType());
+                processor.setActionId(cmd.getActionId());
+                //process action
+                if (processor.onProcess(cmd.getProps(), cmd.getData())) {
+                    cmd.complete();
+                } else {
+                    cmd.fail();
+                }
+                LOGGER.info("processing time: {}", cw.timeElapsedMS());
             } catch (Exception ex) {
-                LOGGER.error("");
-                if(cmd != null){
+                LOGGER.error("handle command get error", ex);
+                if (cmd != null) {
                     cmd.error(ex);
                 }
-            } 
+            }
         }
     }
 
     public void terminate() {
+        try {
+            sendCommand(new Killed());
+        } catch (InterruptedException ex) {
+        }
         interrupt();
     }
 }

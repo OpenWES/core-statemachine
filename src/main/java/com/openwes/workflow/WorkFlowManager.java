@@ -19,6 +19,11 @@ public class WorkFlowManager {
         return INSTANCE;
     }
 
+    public final static WorkFlow workflow(String actorType) {
+        return WorkFlowManager.instance()
+                .findWorkFlow(actorType);
+    }
+
     private final Map<String, WorkFlow> workflows = new HashMap<>();
     private final WorkFlowExecutor executor = new WorkFlowExecutor();
 
@@ -30,7 +35,7 @@ public class WorkFlowManager {
         return executor;
     }
 
-    public WorkFlow workFlow(String actorType) {
+    public WorkFlow findWorkFlow(String actorType) {
         if (Validate.isEmpty(actorType)) {
             throw new RuntimeException("");
         }
@@ -41,7 +46,7 @@ public class WorkFlowManager {
         if (wf == null) {
             throw new RuntimeException("");
         }
-        WorkFlow old = workFlow(wf.getType());
+        WorkFlow old = findWorkFlow(wf.getType());
         if (old != null) {
             old.getTransitions().forEach((transition) -> {
                 wf.addTransition(transition);
@@ -52,7 +57,7 @@ public class WorkFlowManager {
     }
 
     public WorkFlowManager unregister(String actorType) {
-        WorkFlow wf = workFlow(actorType);
+        WorkFlow wf = findWorkFlow(actorType);
         if (wf == null) {
             return this;
         }
@@ -60,8 +65,13 @@ public class WorkFlowManager {
         workflows.remove(wf.getType());
         return this;
     }
+    
+    public void start(){
+        executor.init();
+    }
 
     public void shutdown() {
+        executor.shutdown();
         workflows.forEach((actorType, workFlow) -> {
             workFlow.shutdown();
         });

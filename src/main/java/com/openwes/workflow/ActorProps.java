@@ -2,6 +2,8 @@ package com.openwes.workflow;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  *
@@ -48,4 +50,10 @@ public class ActorProps {
     public boolean getBoolean(String key) {
         return (boolean) props.get(key);
     }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+    }
+
 }

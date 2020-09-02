@@ -15,6 +15,7 @@ public class Action {
     private final String actorId;
     private final String name;
     private final Object data;
+    private ActionEndHandler handler;
 
     public Action(String actorId, String name) {
         this(actorId, name, null);
@@ -33,6 +34,15 @@ public class Action {
     Action setId(long id) {
         this.id = id;
         return this;
+    }
+
+    public Action setHandler(ActionEndHandler handler) {
+        this.handler = handler;
+        return this;
+    }
+
+    public ActionEndHandler getHandler() {
+        return handler;
     }
 
     public String getActorId() {

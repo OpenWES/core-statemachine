@@ -25,6 +25,10 @@ public final class ClockService {
         return new ClockWatch();
     }
 
+    public final static ClockWatch newClockWatch(long nanoTimes) {
+        return new ClockWatch(nanoTimes);
+    }
+
     //  High precision timestamp.
     public final static long nowUS() {
         return TimeUnit.MICROSECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);

@@ -9,8 +9,17 @@ package com.openwes.workflow;
  */
 class WorkFlowExecutor {
 
-    public void submit(Command cmd){
-        
+    private final Worker w = new Worker();
+
+    void start(int numberOfWorker) {
+        w.start();
     }
-    
+
+    public void submit(Command cmd) throws InterruptedException {
+        w.sendCommand(cmd);
+    }
+
+    public void shutdown() {
+        w.terminate();
+    }
 }
