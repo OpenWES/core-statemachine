@@ -1,9 +1,9 @@
 
+import com.openwes.core.utils.UniqId;
 import com.openwes.workflow.Action;
 import com.openwes.workflow.Transition;
 import com.openwes.workflow.WorkFlow;
 import com.openwes.workflow.WorkFlowManager;
-import com.openwes.workflow.utils.UniqId;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

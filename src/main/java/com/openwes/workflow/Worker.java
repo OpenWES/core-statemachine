@@ -1,8 +1,8 @@
 package com.openwes.workflow;
 
-import com.openwes.workflow.utils.ClassUtils;
-import com.openwes.workflow.utils.ClockService;
-import com.openwes.workflow.utils.ClockWatch;
+import com.openwes.core.utils.ClassUtils;
+import com.openwes.core.utils.ClockService;
+import com.openwes.core.utils.ClockWatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

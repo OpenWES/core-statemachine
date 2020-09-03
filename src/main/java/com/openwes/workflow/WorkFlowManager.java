@@ -1,6 +1,6 @@
 package com.openwes.workflow;
 
-import com.openwes.workflow.utils.Validate;
+import com.openwes.core.utils.Validate;
 import java.util.HashMap;
 import java.util.Map;
 

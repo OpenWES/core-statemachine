@@ -1,6 +1,6 @@
 package com.openwes.workflow;
 
-import com.openwes.workflow.utils.UniqId;
+import com.openwes.core.utils.UniqId;
 
 /**
  *

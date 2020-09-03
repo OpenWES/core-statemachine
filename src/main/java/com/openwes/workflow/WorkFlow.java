@@ -1,8 +1,8 @@
 package com.openwes.workflow;
 
-import com.openwes.workflow.utils.ClassLoadException;
-import com.openwes.workflow.utils.ClassUtils;
-import com.openwes.workflow.utils.Validate;
+import com.openwes.core.utils.ClassLoadException;
+import com.openwes.core.utils.ClassUtils;
+import com.openwes.core.utils.Validate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
