@@ -1,5 +1,9 @@
 package com.openwes.workflow;
 
+import com.openwes.core.utils.FNVHash;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author xuanloc0511@gmail.com
@@ -9,17 +13,36 @@ package com.openwes.workflow;
  */
 class WorkFlowExecutor {
 
-    private final Worker w = new Worker();
+    private final List<Worker> workers = new ArrayList();
 
-    void start() {
-        w.start();
+    void start(int maxWorkerSize) {
+        if (maxWorkerSize == 0) {
+            throw new RuntimeException("can not set worker size smaller than 1");
+        }
+        for (int i = 0; i < maxWorkerSize; i++) {
+            Worker w = new Worker(i + 1);
+            w.setDaemon(true);
+            w.setName(String.format("WorkflowWorker-%d", i + 1));
+            w.start();
+            workers.add(w);
+        }
     }
 
     public void submit(Command cmd) throws InterruptedException {
+        if (workers.isEmpty()) {
+            return;
+        }
+        Worker w = workers.get(Math.abs(FNVHash.hash32(cmd.getActorId()) % workers.size()));
+        if (w == null) {
+            return;
+        }
         w.sendCommand(cmd);
     }
 
     public void shutdown() {
-        w.terminate();
+        workers.forEach((w) -> {
+            w.terminate();
+        });
+        workers.clear();
     }
 }

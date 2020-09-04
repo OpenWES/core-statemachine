@@ -17,6 +17,12 @@ public class Worker extends Thread {
 
     private final LinkedBlockingQueue<Command> commands = new LinkedBlockingQueue<>();
 
+    private final int index;
+
+    public Worker(int index) {
+        this.index = index;
+    }
+    
     void sendCommand(Command cmd) throws InterruptedException {
         commands.put(cmd);
     }

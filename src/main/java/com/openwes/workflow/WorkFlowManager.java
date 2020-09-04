@@ -1,6 +1,7 @@
 package com.openwes.workflow;
 
 import com.openwes.core.utils.Validate;
+import com.typesafe.config.Config;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,9 +66,9 @@ public class WorkFlowManager {
         workflows.remove(wf.getType());
         return this;
     }
-    
-    public void start(){
-        executor.start();
+
+    public void start(Config config) {
+        executor.start(config.getInt("max-worker-size"));
     }
 
     public void shutdown() {

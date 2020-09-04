@@ -1,9 +1,12 @@
 
+import com.openwes.Main;
+import com.openwes.core.Application;
 import com.openwes.core.utils.UniqId;
 import com.openwes.workflow.Action;
 import com.openwes.workflow.Transition;
 import com.openwes.workflow.WorkFlow;
 import com.openwes.workflow.WorkFlowManager;
+import com.typesafe.config.ConfigFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +26,6 @@ public class TestWorkFlow {
 
     @Before
     public void beforeTest() {
-        UniqId.instance().initSnowFlakeIdGenerator(1);
         WorkFlowManager.instance()
                 .register(WorkFlow.create(TestActor.class.getName())
                         .setActorLoader(TestActorLoader.class.getName())
@@ -46,8 +48,8 @@ public class TestWorkFlow {
                         .addTransition(Transition.fromAny()
                                 .setAction("ACTION_5")
                                 .setTo("D")
-                                .setProcessor(ProcessActionAny2D.class.getName())))
-                .start();
+                                .setProcessor(ProcessActionAny2D.class.getName())));
+        Application.run();
     }
 
     @Test
@@ -60,13 +62,10 @@ public class TestWorkFlow {
                 .execute(new Action("2", "ACTION_3", null))
                 .execute(new Action("2", "ACTION_4", null))
                 .execute(new Action("2", "ACTION_5", null));
-        Thread.sleep(2000);
+        Thread.sleep(1000);
     }
 
     @After
     public void afterTest() {
-        WorkFlowManager.instance()
-                .unregister(TestActor.class.getName())
-                .shutdown();
     }
 }
