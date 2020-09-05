@@ -10,12 +10,23 @@ class Command {
 
     private final long started = ClockService.nowNS();
     private long actionId;
+    private String txId;
     private String actorType;
     private String processor;
     private Object data;
     private String actorId;
     private ActorProps props;
     private CommandWatcher watcher;
+    private ActionEndHandler endHandler;
+
+    public String getTxId() {
+        return txId;
+    }
+
+    public Command setTxId(String txId) {
+        this.txId = txId;
+        return this;
+    }
 
     public Command setActionId(long actionId) {
         this.actionId = actionId;
@@ -76,21 +87,39 @@ class Command {
         return this;
     }
 
+    public ActionEndHandler getEndHandler() {
+        return endHandler;
+    }
+
+    public Command setEndHandler(ActionEndHandler endHandler) {
+        this.endHandler = endHandler;
+        return this;
+    }
+
     public long getStarted() {
         return started;
     }
 
-    void complete() {
+    public void complete() {
         watcher.onComplete();
+        if (endHandler != null) {
+            endHandler.onCompleted(actorId, props, data);
+        }
     }
 
-    void fail() {
+    public void fail() {
         watcher.onFail();
+        if (endHandler != null) {
+            endHandler.onFailure(actorId, props, data);
+        }
     }
 
-    void error(Throwable t) {
+    public void error(Throwable t) {
         fail();
         watcher.onError(t);
+        if (endHandler != null) {
+            endHandler.onError(t);
+        }
     }
 
 }

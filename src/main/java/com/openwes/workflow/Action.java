@@ -12,10 +12,11 @@ import com.openwes.core.utils.UniqId;
 public class Action {
 
     private long id = UniqId.snowflakeId();
+    private String txId = UniqId.uniqId16Bytes();
     private final String actorId;
     private final String name;
     private final Object data;
-    private ActionEndHandler handler;
+    private ActionEndHandler endHandler;
 
     public Action(String actorId, String name) {
         this(actorId, name, null);
@@ -27,6 +28,15 @@ public class Action {
         this.data = data;
     }
 
+    public String getTxId() {
+        return txId;
+    }
+
+    public Action setTxId(String txId) {
+        this.txId = txId;
+        return this;
+    }
+
     long getId() {
         return id;
     }
@@ -36,13 +46,13 @@ public class Action {
         return this;
     }
 
-    public Action setHandler(ActionEndHandler handler) {
-        this.handler = handler;
-        return this;
+    public ActionEndHandler getEndHandler() {
+        return endHandler;
     }
 
-    public ActionEndHandler getHandler() {
-        return handler;
+    public Action setEndHandler(ActionEndHandler endHandler) {
+        this.endHandler = endHandler;
+        return this;
     }
 
     public String getActorId() {

@@ -1,5 +1,7 @@
 package com.openwes.workflow;
 
+import com.openwes.core.logging.LogContext;
+import com.openwes.core.utils.Validate;
 import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
@@ -13,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class Actor {
-
+    
     private final static Logger LOGGER = LoggerFactory.getLogger(Actor.class);
     private final AtomicBoolean inProcess = new AtomicBoolean(false);
     private final PriorityQueue<Action> actions = new PriorityQueue<>((left, right) -> {
@@ -25,47 +27,47 @@ public class Actor {
     private String actorType;
     private String currentState;
     private TransitionLookup lookup;
-
+    
     void setActorType(String actorType) {
         this.actorType = actorType;
     }
-
+    
     public ActorProps getProps() {
         return props;
     }
-
+    
     TransitionLookup getLookup() {
         return lookup;
     }
-
+    
     Actor setLookup(TransitionLookup lookup) {
         this.lookup = lookup;
         return this;
     }
-
+    
     public final <T extends Actor> T setCurrentState(String currentState) {
         this.currentState = currentState;
         return (T) this;
     }
-
+    
     public final <T extends Actor> T setId(String id) {
         this.id = id;
         return (T) this;
     }
-
+    
     public final String getId() {
         return id;
     }
-
+    
     public final String getCurrentState() {
         return currentState;
     }
-
+    
     void enqueueAction(Action action) {
         actions.add(action);
         nextAction();
     }
-
+    
     void nextAction() {
         try {
             synchronized (mutex) {
@@ -78,6 +80,7 @@ public class Actor {
                     inProcess.set(false);
                     return;
                 }
+                LogContext.set(LogContext.TXID, action.getTxId());
                 Transition transition = lookup.lookup(currentState, action.getName());
                 if (transition == null) {
                     LOGGER.error("Invalid action {}. Actor {}:{} is in state {}",
@@ -89,11 +92,13 @@ public class Actor {
                 inProcess.set(true);
                 Command cmd = new Command()
                         .setActionId(action.getId())
+                        .setTxId(action.getTxId())
                         .setActorType(actorType)
                         .setActorId(getId())
                         .setProps(props)
                         .setData(action.getData())
                         .setProcessor(transition.getProcessor())
+                        .setEndHandler(action.getEndHandler())
                         .setWatcher(new CommandWatcher() {
                             @Override
                             public void onComplete() {
@@ -103,7 +108,7 @@ public class Actor {
                                 inProcess.set(false);
                                 nextAction();
                             }
-
+                            
                             @Override
                             public void onFail() {
                                 LOGGER.info("Process action {} fail. Actor {}:{} keep state {}",
@@ -111,7 +116,7 @@ public class Actor {
                                 inProcess.set(false);
                                 nextAction();
                             }
-
+                            
                             @Override
                             public void onError(Throwable t) {
                                 LOGGER.error("Actor {}:{} get error with action {}",
@@ -126,15 +131,15 @@ public class Actor {
             LOGGER.error("actor {}:{} handle next action get exception ", actorType, id, e);
         }
     }
-
+    
     Action dequeueAction() {
         return actions.poll();
     }
-
+    
     void clearAction() {
         actions.clear();
     }
-
+    
     public int remainingAction() {
         return actions.size();
     }
