@@ -68,7 +68,12 @@ public class WorkFlowManager {
     }
 
     public void start(Config config) {
-        executor.start(config.getInt("max-worker-size"));
+        int workerSize = config.getInt("worker-size");
+        if(workerSize < 1){
+            throw new RuntimeException("worker size must larger than 0");
+        }
+        workerSize = Math.max(Runtime.getRuntime().availableProcessors(), workerSize);
+        executor.start(workerSize);
     }
 
     public void shutdown() {

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author xuanloc0511@gmail.com
  */
-public class Worker extends Thread {
+class Worker extends Thread {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Worker.class);
 
