@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author xuanloc0511@gmail.com
  */
-@Implementation(source = ProcessActionA2B.class)
+@Implementation
 public class ProcessActionA2B extends Processor<Object> {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ProcessActionA2B.class);
