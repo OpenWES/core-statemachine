@@ -3,7 +3,6 @@ package com.openwes.workflow;
 import static com.openwes.core.IOC.init;
 import com.openwes.core.Transaction;
 import com.openwes.core.logging.LogContext;
-import com.openwes.core.utils.ClassUtils;
 import com.openwes.core.utils.ClockService;
 import com.openwes.core.utils.ClockWatch;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -50,7 +49,7 @@ class Worker extends Thread {
                 ClockWatch cw = ClockService.newClockWatch(cmd.getStarted());
                 LogContext.set(LogContext.TXID, cmd.getTxId());
                 LOGGER.info("preparing time: {}", cw.timeElapsedMS());
-                Processor processor = ClassUtils.object(cmd.getProcessor());
+                Processor processor = init(cmd.getProcessor());
 
                 //update process attribute
                 processor.setActorId(cmd.getActorId());

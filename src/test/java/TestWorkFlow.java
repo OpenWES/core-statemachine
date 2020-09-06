@@ -1,4 +1,8 @@
 
+import com.openwes.test.ProcessActionA2B;
+import com.openwes.test.ProcessActionAny2D;
+import com.openwes.test.ProcessActionC2D;
+import com.openwes.test.ProcessActionB2C;
 import com.openwes.Main;
 import com.openwes.core.Application;
 import com.openwes.core.utils.UniqId;
@@ -32,23 +36,23 @@ public class TestWorkFlow {
                         .addTransition(Transition.from("A")
                                 .setAction("ACTION_1")
                                 .setTo("B")
-                                .setProcessor(ProcessActionA2B.class.getName()))
+                                .setProcessor(ProcessActionA2B.class))
                         .addTransition(Transition.from("B")
                                 .setAction("ACTION_2")
                                 .setTo("C")
-                                .setProcessor(ProcessActionB2C.class.getName()))
+                                .setProcessor(ProcessActionB2C.class))
                         .addTransition(Transition.from("C")
                                 .setAction("ACTION_3")
                                 .setTo("D")
-                                .setProcessor(ProcessActionC2D.class.getName()))
+                                .setProcessor(ProcessActionC2D.class))
                         .addTransition(Transition.from("A")
                                 .setAction("ACTION_4")
                                 .setTo("C")
-                                .setProcessor(ProcessActionC2D.class.getName()))
+                                .setProcessor(ProcessActionC2D.class))
                         .addTransition(Transition.fromAny()
                                 .setAction("ACTION_5")
                                 .setTo("D")
-                                .setProcessor(ProcessActionAny2D.class.getName())));
+                                .setProcessor(ProcessActionAny2D.class)));
         Application.run();
     }
 

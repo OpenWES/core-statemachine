@@ -1,4 +1,7 @@
+package com.openwes.test;
 
+
+import com.openwes.core.annotation.Implementation;
 import com.openwes.workflow.ActorProps;
 import com.openwes.workflow.Processor;
 import org.slf4j.Logger;
@@ -8,6 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author xuanloc0511@gmail.com
  */
+@Implementation(source = ProcessActionAny2D.class)
 public class ProcessActionAny2D extends Processor<Object>{
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ProcessActionAny2D.class);

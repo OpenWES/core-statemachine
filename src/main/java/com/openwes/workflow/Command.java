@@ -12,7 +12,7 @@ class Command {
     private long actionId;
     private String txId;
     private String actorType;
-    private String processor;
+    private Class<? extends Processor> processor;
     private Object data;
     private String actorId;
     private ActorProps props;
@@ -46,11 +46,11 @@ class Command {
         return this;
     }
 
-    public String getProcessor() {
+    public Class<? extends Processor> getProcessor() {
         return processor;
     }
 
-    public Command setProcessor(String processor) {
+    public Command setProcessor(Class<? extends Processor> processor) {
         this.processor = processor;
         return this;
     }

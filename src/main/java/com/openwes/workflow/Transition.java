@@ -28,7 +28,7 @@ public class Transition {
     private String from = null;
     private String to = null;
     private String action = null;
-    private String processor = null;
+    private Class<? extends Processor> processor = null;
 
     public boolean isFromAny() {
         return fromAny;
@@ -66,11 +66,11 @@ public class Transition {
         return this;
     }
 
-    public String getProcessor() {
+    public Class<? extends Processor> getProcessor() {
         return processor;
     }
 
-    public Transition setProcessor(String processor) {
+    public Transition setProcessor(Class<? extends Processor> processor) {
         this.processor = processor;
         return this;
     }

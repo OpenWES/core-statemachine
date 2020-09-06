@@ -1,7 +1,6 @@
 package com.openwes.workflow;
 
 import com.openwes.core.logging.LogContext;
-import com.openwes.core.utils.Validate;
 import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
