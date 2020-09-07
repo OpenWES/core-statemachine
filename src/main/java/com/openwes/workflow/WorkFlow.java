@@ -78,6 +78,24 @@ public class WorkFlow {
         return this;
     }
 
+    public WorkFlow removeTransition(String from, String actionName) {
+        String key;
+        if (Validate.isEmpty(from)) {
+            key = new StringBuilder("any://")
+                    .append(actionName)
+                    .toString();
+        } else {
+            key = new StringBuilder()
+                    .append("one://")
+                    .append(from)
+                    .append("/")
+                    .append(actionName)
+                    .toString();
+        }
+        transitions.remove(key);
+        return this;
+    }
+
     public List<Transition> getTransitions() {
         return transitions.values()
                 .stream()
