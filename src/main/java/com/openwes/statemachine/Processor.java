@@ -1,4 +1,4 @@
-package com.openwes.workflow;
+package com.openwes.statemachine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public abstract class Processor<T extends Object> {
 
     protected final void trigger(String action, Object data) {
         LOGGER.info("Actor {} trigger action {} with id {}", actorId, action, actionId);
-        WorkFlowManager.workflow(actorType)
+        StateFlowManager.workflow(actorType)
                 .execute(new Action(actorId, action, data)
                         .setId(actionId));
     }

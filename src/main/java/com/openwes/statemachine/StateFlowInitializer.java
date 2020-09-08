@@ -1,4 +1,4 @@
-package com.openwes.workflow;
+package com.openwes.statemachine;
 
 import com.typesafe.config.Config;
 import com.openwes.core.interfaces.Initializer;
@@ -7,22 +7,22 @@ import com.openwes.core.interfaces.Initializer;
  *
  * @author xuanloc0511@gmail.com
  */
-public class WorkflowInitializer implements Initializer {
+public class StateFlowInitializer implements Initializer {
 
     @Override
     public String configKey() {
-        return "workflow";
+        return "stateflow";
     }
 
     @Override
     public void onStart(Config config) throws Exception {
-        WorkFlowManager.instance()
+        StateFlowManager.instance()
                 .start(config);
     }
 
     @Override
     public void onShutdow(Config config) throws Exception {
-        WorkFlowManager.instance()
+        StateFlowManager.instance()
                 .shutdown();
     }
 

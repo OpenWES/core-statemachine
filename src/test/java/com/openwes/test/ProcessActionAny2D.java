@@ -2,8 +2,8 @@ package com.openwes.test;
 
 
 import com.openwes.core.annotation.Implementation;
-import com.openwes.workflow.ActorProps;
-import com.openwes.workflow.Processor;
+import com.openwes.statemachine.ActorProps;
+import com.openwes.statemachine.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

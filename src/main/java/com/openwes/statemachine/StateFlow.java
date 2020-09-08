@@ -1,4 +1,4 @@
-package com.openwes.workflow;
+package com.openwes.statemachine;
 
 import com.openwes.core.utils.ClassLoadException;
 import com.openwes.core.utils.ClassUtils;
@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
  * @version 1.0.0
  *
  */
-public class WorkFlow {
+public class StateFlow {
 
-    public final static WorkFlow create(String actorType) {
-        return new WorkFlow(actorType);
+    public final static StateFlow create(String actorType) {
+        return new StateFlow(actorType);
     }
 
     private final Map<String, Actor> actors = new HashMap<>();
@@ -43,7 +43,7 @@ public class WorkFlow {
     private final String type;
     private String actorLoader;
 
-    private WorkFlow(String type) {
+    private StateFlow(String type) {
         if (Validate.isEmpty(type)) {
             throw new RuntimeException("");
         }
@@ -58,12 +58,12 @@ public class WorkFlow {
         return actorLoader;
     }
 
-    public WorkFlow setActorLoader(String actorLoader) {
+    public StateFlow setActorLoader(String actorLoader) {
         this.actorLoader = actorLoader;
         return this;
     }
 
-    public WorkFlow addTransition(Transition transition) {
+    public StateFlow addTransition(Transition transition) {
         String key = new StringBuilder()
                 .append(transition.isFromAny() ? "any://" : "one://")
                 .append(transition.isFromAny() ? "" : transition.getFrom())
@@ -78,7 +78,7 @@ public class WorkFlow {
         return this;
     }
 
-    public WorkFlow removeTransition(String from, String actionName) {
+    public StateFlow removeTransition(String from, String actionName) {
         String key;
         if (Validate.isEmpty(from)) {
             key = new StringBuilder("any://")
@@ -109,7 +109,7 @@ public class WorkFlow {
         actors.clear();
     }
 
-    public WorkFlow execute(Action action) {
+    public StateFlow execute(Action action) {
         Actor actor = actors.get(action.getActorId());
         if (actor == null) {
             try {

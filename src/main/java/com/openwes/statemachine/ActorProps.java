@@ -1,4 +1,4 @@
-package com.openwes.workflow;
+package com.openwes.statemachine;
 
 import java.util.HashMap;
 import java.util.Map;

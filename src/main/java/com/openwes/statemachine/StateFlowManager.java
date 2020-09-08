@@ -1,4 +1,4 @@
-package com.openwes.workflow;
+package com.openwes.statemachine;
 
 import com.openwes.core.utils.Validate;
 import com.typesafe.config.Config;
@@ -12,42 +12,42 @@ import java.util.Map;
  * @version 1.0.0
  *
  */
-public class WorkFlowManager {
+public class StateFlowManager {
 
-    private final static WorkFlowManager INSTANCE = new WorkFlowManager();
+    private final static StateFlowManager INSTANCE = new StateFlowManager();
 
-    public final static WorkFlowManager instance() {
+    public final static StateFlowManager instance() {
         return INSTANCE;
     }
 
-    public final static WorkFlow workflow(String actorType) {
-        return WorkFlowManager.instance()
+    public final static StateFlow workflow(String actorType) {
+        return StateFlowManager.instance()
                 .findWorkFlow(actorType);
     }
 
-    private final Map<String, WorkFlow> workflows = new HashMap<>();
-    private final WorkFlowExecutor executor = new WorkFlowExecutor();
+    private final Map<String, StateFlow> workflows = new HashMap<>();
+    private final StateFlowExecutor executor = new StateFlowExecutor();
 
-    private WorkFlowManager() {
+    private StateFlowManager() {
 
     }
 
-    WorkFlowExecutor getExecutor() {
+    StateFlowExecutor getExecutor() {
         return executor;
     }
 
-    public WorkFlow findWorkFlow(String actorType) {
+    public StateFlow findWorkFlow(String actorType) {
         if (Validate.isEmpty(actorType)) {
             throw new RuntimeException("");
         }
         return workflows.get(actorType);
     }
 
-    public WorkFlowManager register(WorkFlow wf) {
+    public StateFlowManager register(StateFlow wf) {
         if (wf == null) {
             throw new RuntimeException("");
         }
-        WorkFlow old = findWorkFlow(wf.getType());
+        StateFlow old = findWorkFlow(wf.getType());
         if (old != null) {
             old.getTransitions().forEach((transition) -> {
                 wf.addTransition(transition);
@@ -57,8 +57,8 @@ public class WorkFlowManager {
         return this;
     }
 
-    public WorkFlowManager unregister(String actorType) {
-        WorkFlow wf = findWorkFlow(actorType);
+    public StateFlowManager unregister(String actorType) {
+        StateFlow wf = findWorkFlow(actorType);
         if (wf == null) {
             return this;
         }

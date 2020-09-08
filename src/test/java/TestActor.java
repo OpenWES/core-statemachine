@@ -1,5 +1,5 @@
 
-import com.openwes.workflow.Actor;
+import com.openwes.statemachine.Actor;
 
 /**
  *

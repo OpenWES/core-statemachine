@@ -1,4 +1,4 @@
-package com.openwes.workflow;
+package com.openwes.statemachine;
 
 import static com.openwes.core.IOC.init;
 import com.openwes.core.Transaction;

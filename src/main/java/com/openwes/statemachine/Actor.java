@@ -1,4 +1,4 @@
-package com.openwes.workflow;
+package com.openwes.statemachine;
 
 import com.openwes.core.logging.LogContext;
 import java.util.PriorityQueue;
@@ -122,7 +122,7 @@ public class Actor {
                                         actorType, id, action.getName(), t);
                             }
                         });
-                WorkFlowManager.instance()
+                StateFlowManager.instance()
                         .getExecutor()
                         .submit(cmd);
             }

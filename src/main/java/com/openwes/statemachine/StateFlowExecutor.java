@@ -1,4 +1,4 @@
-package com.openwes.workflow;
+package com.openwes.statemachine;
 
 import com.openwes.core.utils.FNVHash;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
  * @version 1.0.0
  *
  */
-class WorkFlowExecutor {
+class StateFlowExecutor {
 
     private final List<Worker> workers = new ArrayList();
 

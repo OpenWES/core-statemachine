@@ -4,10 +4,10 @@ import com.openwes.test.ProcessActionAny2D;
 import com.openwes.test.ProcessActionC2D;
 import com.openwes.test.ProcessActionB2C;
 import com.openwes.core.Application;
-import com.openwes.workflow.Action;
-import com.openwes.workflow.Transition;
-import com.openwes.workflow.WorkFlow;
-import com.openwes.workflow.WorkFlowManager;
+import com.openwes.statemachine.Action;
+import com.openwes.statemachine.Transition;
+import com.openwes.statemachine.StateFlow;
+import com.openwes.statemachine.StateFlowManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,14 +21,14 @@ import org.slf4j.LoggerFactory;
  * @author xuanloc0511@gmail.com
  */
 @RunWith(JUnit4.class)
-public class TestWorkFlow {
+public class TestSM {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(TestWorkFlow.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(TestSM.class);
 
     @Before
     public void beforeTest() {
-        WorkFlowManager.instance()
-                .register(WorkFlow.create(TestActor.class.getName())
+        StateFlowManager.instance()
+                .register(StateFlow.create(TestActor.class.getName())
                         .setActorLoader(TestActorLoader.class.getName())
                         .addTransition(Transition.from("A")
                                 .setAction("ACTION_1")
@@ -56,7 +56,7 @@ public class TestWorkFlow {
     @Test
     public void test() throws InterruptedException {
         LOGGER.info("Running test...");
-        WorkFlowManager.workflow(TestActor.class.getName())
+        StateFlowManager.workflow(TestActor.class.getName())
                 .execute(new Action("1", "ACTION_2", null))
                 .execute(new Action("2", "ACTION_1", null))
                 .execute(new Action("2", "ACTION_2", null))

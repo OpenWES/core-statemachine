@@ -1,7 +1,7 @@
 
-import com.openwes.workflow.Action;
-import com.openwes.workflow.Actor;
-import com.openwes.workflow.ActorLoader;
+import com.openwes.statemachine.Action;
+import com.openwes.statemachine.Actor;
+import com.openwes.statemachine.ActorLoader;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
