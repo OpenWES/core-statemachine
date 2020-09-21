@@ -137,7 +137,7 @@ public class StateFlow {
 
     final void destroyActor(String actorId) {
         Actor actor = actors.remove(actorId);
-        if(actor != null){
+        if (actor != null) {
             actor.clearAction();
         }
     }

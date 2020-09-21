@@ -17,6 +17,15 @@ public abstract class Processor<T extends Object> {
     private long actionId;
     private String actorType;
     private String actorId;
+    private Failure failure;
+
+    public final void setFailure(Failure failure) {
+        this.failure = failure;
+    }
+
+    public final Failure getFailure() {
+        return failure;
+    }
 
     void setActionId(long actionId) {
         this.actionId = actionId;

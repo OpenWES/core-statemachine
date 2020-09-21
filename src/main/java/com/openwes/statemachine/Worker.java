@@ -60,7 +60,7 @@ class Worker extends Thread {
                 if (processor.onProcess(cmd.getProps(), cmd.getData())) {
                     cmd.complete();
                 } else {
-                    cmd.fail();
+                    cmd.fail(processor.getFailure());
                 }
                 transaction.commit();
                 LOGGER.info("processing time: {}", cw.timeElapsedMS());

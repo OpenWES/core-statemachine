@@ -107,15 +107,14 @@ class Command {
         }
     }
 
-    public void fail() {
+    public void fail(Failure failure) {
         watcher.onFail();
         if (endHandler != null) {
-            endHandler.onFailure(actorId, props, data);
+            endHandler.onFailure(actorId, props, failure);
         }
     }
 
     public void error(Throwable t) {
-        fail();
         watcher.onError(t);
         if (endHandler != null) {
             endHandler.onError(t);

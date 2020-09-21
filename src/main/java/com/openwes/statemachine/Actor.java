@@ -116,7 +116,7 @@ public class Actor {
                                 LOGGER.info("Actor {}:{} change state from {} to {}",
                                         actorType, id, currentState, transition.getTo());
                                 setCurrentState(transition.getTo());
-                                if(transition.isDestroyOnComplete()){
+                                if (transition.isDestroyOnComplete()) {
                                     StateFlowManager.workflow(actorType)
                                             .destroyActor(id);
                                     return;
@@ -135,8 +135,10 @@ public class Actor {
 
                             @Override
                             public void onError(Throwable t) {
-                                LOGGER.error("Actor {}:{} get error with action {}",
-                                        actorType, id, action.getName(), t);
+                                LOGGER.info("Process action {} get exception. Actor {}:{} keep state {}",
+                                        action.getName(), actorType, id, currentState, t);
+                                inProcess.set(false);
+                                nextAction();
                             }
                         });
                 StateFlowManager.instance()

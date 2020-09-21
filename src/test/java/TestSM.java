@@ -8,6 +8,7 @@ import com.openwes.statemachine.Action;
 import com.openwes.statemachine.Transition;
 import com.openwes.statemachine.StateFlow;
 import com.openwes.statemachine.StateFlowManager;
+import com.openwes.test.ProcessActionAB2D;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +50,8 @@ public class TestSM {
                         .addTransition(Transition.from("A", "B")
                                 .setAction("ACTION_6")
                                 .setTo("D")
-                                .setProcessor(ProcessActionA2B.class))
+                                .setProcessor(ProcessActionAB2D.class)
+                                .setDestroyOnComplete(true))
                         .addTransition(Transition.fromAny()
                                 .setAction("ACTION_5")
                                 .setTo("D")
