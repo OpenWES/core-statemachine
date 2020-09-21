@@ -1,5 +1,7 @@
 package com.openwes.statemachine;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  *
  * @author xuanloc0511@gmail.com
@@ -8,6 +10,22 @@ package com.openwes.statemachine;
  *
  */
 public class Transition {
+
+    public final static String FROM_SEPARATOR = "|";
+
+    public final static Transition createFrom(Transition t) {
+        return new Transition()
+                .setFrom(t.getFrom())
+                .setTo(t.getTo())
+                .setProcessor(t.getProcessor())
+                .setAction(t.getAction());
+    }
+
+    public final static Transition from(String... from) {
+        return new Transition()
+                .setFrom(StringUtils.join(from, FROM_SEPARATOR))
+                .setFromAny(false);
+    }
 
     public final static Transition from(String from) {
         return new Transition()

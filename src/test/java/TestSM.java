@@ -46,6 +46,10 @@ public class TestSM {
                                 .setAction("ACTION_4")
                                 .setTo("C")
                                 .setProcessor(ProcessActionC2D.class))
+                        .addTransition(Transition.from("A", "B")
+                                .setAction("ACTION_6")
+                                .setTo("D")
+                                .setProcessor(ProcessActionA2B.class))
                         .addTransition(Transition.fromAny()
                                 .setAction("ACTION_5")
                                 .setTo("D")
@@ -62,8 +66,10 @@ public class TestSM {
                 .execute(new Action("2", "ACTION_2", null))
                 .execute(new Action("2", "ACTION_3", null))
                 .execute(new Action("2", "ACTION_4", null))
-                .execute(new Action("2", "ACTION_5", null));
-        Thread.sleep(1000);
+                .execute(new Action("2", "ACTION_5", null))
+                .execute(new Action("3", "ACTION_1", null))
+                .execute(new Action("3", "ACTION_6", null));
+        Thread.sleep(2000);
     }
 
     @After

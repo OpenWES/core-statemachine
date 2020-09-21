@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -63,7 +64,7 @@ public class StateFlow {
         return this;
     }
 
-    public StateFlow addTransition(Transition transition) {
+    private StateFlow _addTransition(Transition transition) {
         String key = new StringBuilder()
                 .append(transition.isFromAny() ? "any://" : "one://")
                 .append(transition.isFromAny() ? "" : transition.getFrom())
@@ -76,6 +77,31 @@ public class StateFlow {
         }
         transitions.put(key, transition);
         return this;
+    }
+
+    private final boolean hasEmptyElement(String[] froms) {
+        for (String from : froms) {
+            if (Validate.isEmpty(StringUtils.trimToEmpty(from))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public StateFlow addTransition(Transition transition) {
+        if (transition.isFromAny()) {
+            return _addTransition(transition);
+        } else {
+            String[] froms = StringUtils.split(transition.getFrom(), Transition.FROM_SEPARATOR);
+            if (froms.length == 0 || hasEmptyElement(froms)) {
+                return _addTransition(transition);
+            }
+            for (String from : froms) {
+                from = StringUtils.trimToEmpty(from);
+                _addTransition(Transition.createFrom(transition).setFrom(from));
+            }
+            return this;
+        }
     }
 
     public StateFlow removeTransition(String from, String actionName) {
