@@ -47,6 +47,16 @@ public class Transition {
     private String to = null;
     private String action = null;
     private Class<? extends Processor> processor = null;
+    private boolean destroyOnComplete = false;
+
+    public Transition setDestroyOnComplete(boolean destroyOnComplete) {
+        this.destroyOnComplete = destroyOnComplete;
+        return this;
+    }
+
+    public boolean isDestroyOnComplete() {
+        return destroyOnComplete;
+    }
 
     public boolean isFromAny() {
         return fromAny;

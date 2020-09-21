@@ -27,6 +27,16 @@ public class Actor {
     private String currentState;
     private TransitionLookup lookup;
 
+    public void onStateChange(String from, String to) {
+        /**
+         * Do nothing by default
+         */
+    }
+
+    public boolean isCached() {
+        return true;
+    }
+
     void setActorType(String actorType) {
         this.actorType = actorType;
     }
@@ -45,7 +55,9 @@ public class Actor {
     }
 
     public final <T extends Actor> T setCurrentState(String currentState) {
+        String old = this.currentState;
         this.currentState = currentState;
+        onStateChange(old, currentState);
         return (T) this;
     }
 
@@ -104,6 +116,11 @@ public class Actor {
                                 LOGGER.info("Actor {}:{} change state from {} to {}",
                                         actorType, id, currentState, transition.getTo());
                                 setCurrentState(transition.getTo());
+                                if(transition.isDestroyOnComplete()){
+                                    StateFlowManager.workflow(actorType)
+                                            .destroyActor(id);
+                                    return;
+                                }
                                 inProcess.set(false);
                                 nextAction();
                             }

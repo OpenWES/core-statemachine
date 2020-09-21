@@ -135,6 +135,13 @@ public class StateFlow {
         actors.clear();
     }
 
+    final void destroyActor(String actorId) {
+        Actor actor = actors.remove(actorId);
+        if(actor != null){
+            actor.clearAction();
+        }
+    }
+
     public StateFlow execute(Action action) {
         Actor actor = actors.get(action.getActorId());
         if (actor == null) {
@@ -149,7 +156,9 @@ public class StateFlow {
             }
             actor.setActorType(type);
             actor.setLookup(lookup);
-            actors.put(actor.getId(), actor);
+            if (actor.isCached()) {
+                actors.put(actor.getId(), actor);
+            }
         }
         actor.enqueueAction(action);
         return this;
