@@ -79,7 +79,7 @@ public class StateFlow {
         return this;
     }
 
-    private final boolean hasEmptyElement(String[] froms) {
+    private boolean hasEmptyElement(String[] froms) {
         for (String from : froms) {
             if (Validate.isEmpty(StringUtils.trimToEmpty(from))) {
                 return true;
