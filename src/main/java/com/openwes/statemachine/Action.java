@@ -1,5 +1,6 @@
 package com.openwes.statemachine;
 
+import com.openwes.core.utils.ClockService;
 import com.openwes.core.utils.UniqId;
 
 /**
@@ -11,6 +12,7 @@ import com.openwes.core.utils.UniqId;
  */
 public class Action {
 
+    private final long created = ClockService.nowNS();
     private long id = UniqId.snowflakeId();
     private String txId = UniqId.uniqId16Bytes();
     private final String actorId;
@@ -28,6 +30,10 @@ public class Action {
         this.data = data;
     }
 
+    public long getCreated() {
+        return created;
+    }
+    
     public String getTxId() {
         return txId;
     }

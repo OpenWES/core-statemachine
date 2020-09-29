@@ -10,6 +10,7 @@ import com.openwes.statemachine.StateFlow;
 import com.openwes.statemachine.StateFlowManager;
 import com.openwes.test.ProcessActionAB2D;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,6 +73,24 @@ public class TestSM {
                 .execute(new Action("3", "ACTION_1", null))
                 .execute(new Action("3", "ACTION_6", null));
         Thread.sleep(2000);
+        
+        {
+            String currentState = StateFlowManager.workflow(TestActor.class.getName())
+                .actor("1").getCurrentState();
+            Assert.assertEquals("Actor 1 is at state A", "A", currentState);
+        }
+        
+        {
+            String currentState = StateFlowManager.workflow(TestActor.class.getName())
+                .actor("2").getCurrentState();
+            Assert.assertEquals("Actor 2 is at state D", "D", currentState);
+        }
+        
+        {
+            String currentState = StateFlowManager.workflow(TestActor.class.getName())
+                .actor("3").getCurrentState();
+            Assert.assertEquals("Actor 3 is at state D", "D", currentState);
+        }
     }
 
     @After

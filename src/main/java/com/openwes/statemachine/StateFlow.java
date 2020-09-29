@@ -142,6 +142,10 @@ public class StateFlow {
         }
     }
 
+    public final Actor actor(String actorId) {
+        return actors.get(actorId);
+    }
+
     public StateFlow execute(Action action) {
         Actor actor = actors.get(action.getActorId());
         if (actor == null) {

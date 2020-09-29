@@ -18,6 +18,10 @@ public class Actor {
     private final static Logger LOGGER = LoggerFactory.getLogger(Actor.class);
     private final AtomicBoolean inProcess = new AtomicBoolean(false);
     private final PriorityQueue<Action> actions = new PriorityQueue<>((left, right) -> {
+        //sort by timestamp if they are same id
+        if (left.getId() == right.getId()) {
+            return (int) (left.getCreated() - right.getCreated());
+        }
         return (int) (left.getId() - right.getId());
     });
     private final Object mutex = new Object();
