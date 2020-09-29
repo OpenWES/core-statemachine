@@ -31,6 +31,11 @@ public class Actor {
     private String currentState;
     private TransitionLookup lookup;
 
+    public Actor(String id, String currentState) {
+        this.id = id;
+        this.currentState = currentState;
+    }
+
     public void onStateChange(String from, String to) {
         /**
          * Do nothing by default
@@ -58,7 +63,7 @@ public class Actor {
         return this;
     }
 
-    public final <T extends Actor> T setCurrentState(String currentState) {
+    final <T extends Actor> T setCurrentState(String currentState) {
         String old = this.currentState;
         this.currentState = currentState;
         onStateChange(old, currentState);

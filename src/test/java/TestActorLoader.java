@@ -14,9 +14,7 @@ public class TestActorLoader implements ActorLoader<Action> {
 
     @Override
     public Actor load(Action action) {
-        return new TestActor()
-                .setId(counter.getAndIncrement() + "")
-                .setCurrentState("A");
+        return new TestActor(counter.getAndIncrement() + "", "A");
     }
 
 }
