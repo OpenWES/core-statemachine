@@ -1,5 +1,7 @@
 package com.openwes.statemachine;
 
+import com.openwes.core.utils.ClassLoadException;
+import com.openwes.core.utils.ClassUtils;
 import com.openwes.core.utils.Validate;
 import com.typesafe.config.Config;
 import java.util.HashMap;
@@ -67,11 +69,24 @@ public class StateFlowManager {
         return this;
     }
 
-    public void start(Config config) {
+    public void start(Config config) throws ClassLoadException {
         int workerSize = config.getInt("worker-size");
-        if(workerSize < 1){
+        if (workerSize < 1) {
             throw new RuntimeException("worker size must larger than 0");
         }
+        String factory = null;
+        if (config.hasPath("action-queue-factory")) {
+            factory = config.getString("action-queue-factory");
+        }
+
+        if (Validate.isEmpty(factory)) {
+            factory = InternalActionQueue.class.getName();
+        }
+        
+        //setup action queue factory
+        ActionManager.instance().setActionQueueFactory(ClassUtils.object(factory));
+
+        //setup worker size
         workerSize = Math.max(Runtime.getRuntime().availableProcessors(), workerSize);
         executor.start(workerSize);
     }

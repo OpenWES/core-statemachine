@@ -6,6 +6,9 @@ package com.openwes.statemachine;
  */
 public class Failure {
 
+    public final static int ACTOR_NOT_FOUND = 1,
+            INVALID_ACTION = 2;
+
     private int code;
     private String reason;
 

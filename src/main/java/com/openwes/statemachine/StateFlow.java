@@ -17,11 +17,11 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 public class StateFlow {
-
+    
     public final static StateFlow create(String actorType) {
         return new StateFlow(actorType);
     }
-
+    
     private final Map<String, Actor> actors = new HashMap<>();
     private final Map<String, Transition> transitions = new HashMap<>();
     private final TransitionLookup lookup = (String state, String actionName) -> {
@@ -43,27 +43,27 @@ public class StateFlow {
     };
     private final String type;
     private String actorLoader;
-
+    
     private StateFlow(String type) {
         if (Validate.isEmpty(type)) {
             throw new RuntimeException("");
         }
         this.type = type;
     }
-
+    
     public final String getType() {
         return type;
     }
-
+    
     public String getActorLoader() {
         return actorLoader;
     }
-
+    
     public StateFlow setActorLoader(String actorLoader) {
         this.actorLoader = actorLoader;
         return this;
     }
-
+    
     private StateFlow _addTransition(Transition transition) {
         String key = new StringBuilder()
                 .append(transition.isFromAny() ? "any://" : "one://")
@@ -78,7 +78,7 @@ public class StateFlow {
         transitions.put(key, transition);
         return this;
     }
-
+    
     private boolean hasEmptyElement(String[] froms) {
         for (String from : froms) {
             if (Validate.isEmpty(StringUtils.trimToEmpty(from))) {
@@ -87,7 +87,7 @@ public class StateFlow {
         }
         return false;
     }
-
+    
     public StateFlow addTransition(Transition transition) {
         if (transition.isFromAny()) {
             return _addTransition(transition);
@@ -103,7 +103,7 @@ public class StateFlow {
             return this;
         }
     }
-
+    
     public StateFlow removeTransition(String from, String actionName) {
         String key;
         if (Validate.isEmpty(from)) {
@@ -121,32 +121,32 @@ public class StateFlow {
         transitions.remove(key);
         return this;
     }
-
+    
     public List<Transition> getTransitions() {
         return transitions.values()
                 .stream()
                 .collect(Collectors.toList());
     }
-
+    
     public void shutdown() {
         actors.forEach((id, actor) -> {
             actor.clearAction();
         });
         actors.clear();
     }
-
+    
     final void destroyActor(String actorId) {
         Actor actor = actors.remove(actorId);
         if (actor != null) {
             actor.clearAction();
         }
     }
-
+    
     public final Actor actor(String actorId) {
         return actors.get(actorId);
     }
-
-    public StateFlow execute(Action action) {
+    
+    public synchronized StateFlow execute(Action action) {
         Actor actor = actors.get(action.getActorId());
         if (actor == null) {
             try {
@@ -156,6 +156,14 @@ public class StateFlow {
                 throw new RuntimeException("");
             }
             if (actor == null) {
+                if (action.getEndHandler() != null) {
+                    action.getEndHandler().onFailure(
+                            action.getActorId(),
+                            new ActorProps(),
+                            new Failure()
+                                    .setCode(Failure.ACTOR_NOT_FOUND)
+                                    .setReason("actor not found"));
+                }
                 return this;
             }
             actor.setActorType(type);
@@ -163,6 +171,7 @@ public class StateFlow {
             if (actor.isCached()) {
                 actors.put(actor.getId(), actor);
             }
+            actor.createQueueIfNotExists();
         }
         actor.enqueueAction(action);
         return this;

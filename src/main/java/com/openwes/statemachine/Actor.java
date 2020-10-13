@@ -1,7 +1,6 @@
 package com.openwes.statemachine;
 
 import com.openwes.core.logging.LogContext;
-import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +16,9 @@ public class Actor {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Actor.class);
     private final AtomicBoolean inProcess = new AtomicBoolean(false);
-    private final PriorityQueue<Action> actions = new PriorityQueue<>((left, right) -> {
-        //sort by timestamp if they are same id
-        if (left.getId() == right.getId()) {
-            return (int) (left.getCreated() - right.getCreated());
-        }
-        return (int) (left.getId() - right.getId());
-    });
     private final Object mutex = new Object();
     private final ActorProps props = new ActorProps();
-    private String id;
+    private final String id;
     private String actorType;
     private String currentState;
     private TransitionLookup lookup;
@@ -70,11 +62,6 @@ public class Actor {
         return (T) this;
     }
 
-    public final <T extends Actor> T setId(String id) {
-        this.id = id;
-        return (T) this;
-    }
-
     public final String getId() {
         return id;
     }
@@ -83,8 +70,14 @@ public class Actor {
         return currentState;
     }
 
+    void createQueueIfNotExists() {
+        ActionManager.instance()
+                .createQueueIfNotExists(id);
+    }
+
     void enqueueAction(Action action) {
-        actions.add(action);
+        ActionManager.instance()
+                .enqueueAction(id, action);
         nextAction();
     }
 
@@ -105,6 +98,12 @@ public class Actor {
                 if (transition == null) {
                     LOGGER.error("Invalid action {}. Actor {}:{} is in state {}",
                             action.getName(), actorType, id, currentState);
+                    if (action.getEndHandler() != null) {
+                        action.getEndHandler()
+                                .onFailure(id, props, new Failure()
+                                        .setCode(Failure.INVALID_ACTION)
+                                        .setReason("invalidate action"));
+                    }
                     inProcess.set(false);
                     nextAction();
                     return;
@@ -160,14 +159,17 @@ public class Actor {
     }
 
     Action dequeueAction() {
-        return actions.poll();
+        return ActionManager.instance()
+                .dequeueAction(id);
     }
 
     void clearAction() {
-        actions.clear();
+        ActionManager.instance()
+                .clearAction(id);
     }
 
     public final int remainingAction() {
-        return actions.size();
+        return ActionManager.instance()
+                .remainingAction(id);
     }
 }
