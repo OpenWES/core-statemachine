@@ -1,5 +1,8 @@
-package com.openwes.statemachine;
+package com.openwes.statemachine.impl;
 
+import com.openwes.core.annotation.Implementation;
+import com.openwes.statemachine.Action;
+import com.openwes.statemachine.ActionQueueFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -7,8 +10,10 @@ import java.util.PriorityQueue;
 /**
  *
  * @author xuanloc0511@gmail.com
+ * @param <E>
  */
-class InternalActionQueue<E extends Action> implements ActionQueueFactory<E> {
+@Implementation(source = ActionQueueFactory.class)
+public class InternalActionQueue<E extends Action> implements ActionQueueFactory<E> {
 
     private final Map<String, PriorityQueue<E>> actions = new HashMap<>();
 

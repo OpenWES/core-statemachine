@@ -43,11 +43,11 @@ public class Action {
         return this;
     }
 
-    long getId() {
+    public long getId() {
         return id;
     }
 
-    Action setId(long id) {
+    public Action setId(long id) {
         this.id = id;
         return this;
     }
