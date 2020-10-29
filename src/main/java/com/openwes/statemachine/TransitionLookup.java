@@ -6,6 +6,6 @@ package com.openwes.statemachine;
  */
 public interface TransitionLookup {
 
-    public Transition lookup(String state, String actionName);
+    public Transition lookup(String profile, String state, String actionName);
 
 }

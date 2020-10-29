@@ -1,6 +1,8 @@
 package com.openwes.statemachine;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  *
@@ -13,8 +15,11 @@ public class Transition {
 
     public final static String FROM_SEPARATOR = "|";
 
+    public final static String PROFILE_DEFAULT = "default";
+
     public final static Transition createFrom(Transition t) {
         return new Transition()
+                .setProfile(t.getProfile())
                 .setFrom(t.getFrom())
                 .setTo(t.getTo())
                 .setProcessor(t.getProcessor())
@@ -42,6 +47,7 @@ public class Transition {
     private Transition() {
     }
 
+    private String profile = PROFILE_DEFAULT;
     private boolean fromAny = false;
     private String from = null;
     private String to = null;
@@ -76,6 +82,15 @@ public class Transition {
         return this;
     }
 
+    public Transition setProfile(String profile) {
+        this.profile = profile;
+        return this;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
     public String getTo() {
         return to;
     }
@@ -103,4 +118,8 @@ public class Transition {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
+    }
 }

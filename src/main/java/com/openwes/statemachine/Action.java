@@ -1,7 +1,10 @@
 package com.openwes.statemachine;
 
+import com.google.gson.annotations.Expose;
 import com.openwes.core.utils.ClockService;
 import com.openwes.core.utils.UniqId;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  *
@@ -12,13 +15,17 @@ import com.openwes.core.utils.UniqId;
  */
 public class Action {
 
+    //final properties
     private final long created = ClockService.nowNS();
-    private long id = UniqId.snowflakeId();
-    private String txId = UniqId.uniqId16Bytes();
     private final String actorId;
     private final String name;
     private final Object data;
+
+    //normal properties
+    private long id = UniqId.snowflakeId();
+    private String txId = UniqId.uniqId16Bytes();
     private ActionEndHandler endHandler;
+    private String profile = Transition.PROFILE_DEFAULT;
 
     public Action(String actorId, String name) {
         this(actorId, name, null);
@@ -30,10 +37,19 @@ public class Action {
         this.data = data;
     }
 
+    public Action setProfile(String profile) {
+        this.profile = profile;
+        return this;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
     public long getCreated() {
         return created;
     }
-    
+
     public String getTxId() {
         return txId;
     }
@@ -71,6 +87,11 @@ public class Action {
 
     public Object getData() {
         return data;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 
 }

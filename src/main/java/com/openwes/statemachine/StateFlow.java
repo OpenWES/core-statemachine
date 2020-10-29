@@ -17,16 +17,17 @@ import org.apache.commons.lang3.StringUtils;
  *
  */
 public class StateFlow {
-    
+
     public final static StateFlow create(String actorType) {
         return new StateFlow(actorType);
     }
-    
+
     private final Map<String, Actor> actors = new HashMap<>();
     private final Map<String, Transition> transitions = new HashMap<>();
-    private final TransitionLookup lookup = (String state, String actionName) -> {
+    private final TransitionLookup lookup = (String profile, String state, String actionName) -> {
         String key = new StringBuilder()
                 .append("one://")
+                .append(profile).append("/")
                 .append(state)
                 .append("/")
                 .append(actionName)
@@ -35,6 +36,7 @@ public class StateFlow {
         if (t == null) {
             key = new StringBuilder()
                     .append("any://")
+                    .append(profile).append("/")
                     .append(actionName)
                     .toString();
             t = transitions.get(key);
@@ -43,30 +45,31 @@ public class StateFlow {
     };
     private final String type;
     private String actorLoader;
-    
+
     private StateFlow(String type) {
         if (Validate.isEmpty(type)) {
             throw new RuntimeException("");
         }
         this.type = type;
     }
-    
+
     public final String getType() {
         return type;
     }
-    
+
     public String getActorLoader() {
         return actorLoader;
     }
-    
+
     public StateFlow setActorLoader(String actorLoader) {
         this.actorLoader = actorLoader;
         return this;
     }
-    
+
     private StateFlow _addTransition(Transition transition) {
         String key = new StringBuilder()
                 .append(transition.isFromAny() ? "any://" : "one://")
+                .append(transition.getProfile()).append("/")
                 .append(transition.isFromAny() ? "" : transition.getFrom())
                 .append(transition.isFromAny() ? "" : "/")
                 .append(transition.getAction())
@@ -78,7 +81,7 @@ public class StateFlow {
         transitions.put(key, transition);
         return this;
     }
-    
+
     private boolean hasEmptyElement(String[] froms) {
         for (String from : froms) {
             if (Validate.isEmpty(StringUtils.trimToEmpty(from))) {
@@ -87,13 +90,13 @@ public class StateFlow {
         }
         return false;
     }
-    
+
     public StateFlow addTransition(Transition transition) {
         if (transition.isFromAny()) {
             return _addTransition(transition);
         } else {
             String[] froms = StringUtils.split(transition.getFrom(), Transition.FROM_SEPARATOR);
-            if (froms.length == 0 || hasEmptyElement(froms)) {
+            if (froms.length == 1 || hasEmptyElement(froms)) {
                 return _addTransition(transition);
             }
             for (String from : froms) {
@@ -103,16 +106,22 @@ public class StateFlow {
             return this;
         }
     }
-    
+
     public StateFlow removeTransition(String from, String actionName) {
+        return removeTransition(Transition.PROFILE_DEFAULT, from, actionName);
+    }
+
+    public StateFlow removeTransition(String profile, String from, String actionName) {
         String key;
         if (Validate.isEmpty(from)) {
             key = new StringBuilder("any://")
+                    .append(profile).append("/")
                     .append(actionName)
                     .toString();
         } else {
             key = new StringBuilder()
                     .append("one://")
+                    .append(profile).append("/")
                     .append(from)
                     .append("/")
                     .append(actionName)
@@ -121,31 +130,31 @@ public class StateFlow {
         transitions.remove(key);
         return this;
     }
-    
+
     public List<Transition> getTransitions() {
         return transitions.values()
                 .stream()
                 .collect(Collectors.toList());
     }
-    
+
     public void shutdown() {
         actors.forEach((id, actor) -> {
             actor.clearAction();
         });
         actors.clear();
     }
-    
+
     final void destroyActor(String actorId) {
         Actor actor = actors.remove(actorId);
         if (actor != null) {
             actor.clearAction();
         }
     }
-    
+
     public final Actor actor(String actorId) {
         return actors.get(actorId);
     }
-    
+
     public synchronized StateFlow execute(Action action) {
         Actor actor = actors.get(action.getActorId());
         if (actor == null) {

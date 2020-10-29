@@ -94,7 +94,7 @@ public class Actor {
                     return;
                 }
                 LogContext.set(LogContext.TXID, action.getTxId());
-                Transition transition = lookup.lookup(currentState, action.getName());
+                Transition transition = lookup.lookup(action.getProfile(), currentState, action.getName());
                 if (transition == null) {
                     LOGGER.error("Invalid action {}. Actor {}:{} is in state {}",
                             action.getName(), actorType, id, currentState);
@@ -108,6 +108,7 @@ public class Actor {
                     nextAction();
                     return;
                 }
+                LOGGER.info("Handle action {} using transition {}", action, transition);
                 inProcess.set(true);
                 Command cmd = new Command()
                         .setActionId(action.getId())

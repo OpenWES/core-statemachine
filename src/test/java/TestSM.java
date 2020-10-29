@@ -9,6 +9,7 @@ import com.openwes.statemachine.Transition;
 import com.openwes.statemachine.StateFlow;
 import com.openwes.statemachine.StateFlowManager;
 import com.openwes.test.ProcessActionAB2D;
+import com.openwes.test.ProcessActionB2CCustomized;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +41,11 @@ public class TestSM {
                                 .setAction("ACTION_2")
                                 .setTo("C")
                                 .setProcessor(ProcessActionB2C.class))
+                        .addTransition(Transition.from("B")
+                                .setAction("ACTION_2")
+                                .setProfile("customized")
+                                .setTo("D")
+                                .setProcessor(ProcessActionB2CCustomized.class))
                         .addTransition(Transition.from("C")
                                 .setAction("ACTION_3")
                                 .setTo("D")
@@ -71,25 +77,33 @@ public class TestSM {
                 .execute(new Action("2", "ACTION_4", null))
                 .execute(new Action("2", "ACTION_5", null))
                 .execute(new Action("3", "ACTION_1", null))
-                .execute(new Action("3", "ACTION_6", null));
+                .execute(new Action("3", "ACTION_6", null))
+                .execute(new Action("4", "ACTION_1", null))
+                .execute(new Action("4", "ACTION_2", null).setProfile("customized"));
         Thread.sleep(2000);
-        
+
         {
             String currentState = StateFlowManager.workflow(TestActor.class.getName())
-                .actor("1").getCurrentState();
+                    .actor("1").getCurrentState();
             Assert.assertEquals("Actor 1 is at state A", "A", currentState);
         }
-        
+
         {
             String currentState = StateFlowManager.workflow(TestActor.class.getName())
-                .actor("2").getCurrentState();
+                    .actor("2").getCurrentState();
             Assert.assertEquals("Actor 2 is at state D", "D", currentState);
         }
-        
+
         {
             String currentState = StateFlowManager.workflow(TestActor.class.getName())
-                .actor("3").getCurrentState();
+                    .actor("3").getCurrentState();
             Assert.assertEquals("Actor 3 is at state D", "D", currentState);
+        }
+
+        {
+            String currentState = StateFlowManager.workflow(TestActor.class.getName())
+                    .actor("4").getCurrentState();
+            Assert.assertEquals("Actor 4 is at state D", "D", currentState);
         }
     }
 
