@@ -12,7 +12,7 @@ import java.util.PriorityQueue;
  * @author xuanloc0511@gmail.com
  * @param <E>
  */
-@Implementation(source = ActionQueueFactory.class)
+@Implementation(of = ActionQueueFactory.class)
 public class InternalActionQueue<E extends Action> implements ActionQueueFactory<E> {
 
     private final Map<String, PriorityQueue<E>> actions = new HashMap<>();
