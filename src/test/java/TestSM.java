@@ -32,7 +32,7 @@ public class TestSM {
     public void beforeTest() {
         StateFlowManager.instance()
                 .register(StateFlow.create(TestActor.class.getName())
-                        .setActorLoader(TestActorLoader.class.getName())
+                        .setActorLoader(TestActorLoader.class)
                         .addTransition(Transition.from("A")
                                 .setAction("ACTION_1")
                                 .setTo("B")

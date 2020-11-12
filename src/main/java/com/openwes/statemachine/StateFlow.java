@@ -1,5 +1,6 @@
 package com.openwes.statemachine;
 
+import com.openwes.core.IOC;
 import com.openwes.core.utils.ClassLoadException;
 import com.openwes.core.utils.ClassUtils;
 import com.openwes.core.utils.Validate;
@@ -44,7 +45,7 @@ public class StateFlow {
         return t;
     };
     private final String type;
-    private String actorLoader;
+    private Class<? super ActorLoader> actorLoader;
 
     private StateFlow(String type) {
         if (Validate.isEmpty(type)) {
@@ -57,12 +58,12 @@ public class StateFlow {
         return type;
     }
 
-    public String getActorLoader() {
+    public Class<? super ActorLoader> getActorLoader() {
         return actorLoader;
     }
 
-    public StateFlow setActorLoader(String actorLoader) {
-        this.actorLoader = actorLoader;
+    public <T extends ActorLoader> StateFlow setActorLoader(Class<T> actorLoader) {
+        this.actorLoader = (Class<? super ActorLoader>) actorLoader;
         return this;
     }
 
@@ -159,10 +160,10 @@ public class StateFlow {
         Actor actor = actors.get(action.getActorId());
         if (actor == null) {
             try {
-                ActorLoader loader = ClassUtils.object(actorLoader);
+                ActorLoader loader = (ActorLoader) IOC.init(actorLoader);
                 actor = loader.load(action);
-            } catch (ClassLoadException ex) {
-                throw new RuntimeException("");
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
             if (actor == null) {
                 if (action.getEndHandler() != null) {
